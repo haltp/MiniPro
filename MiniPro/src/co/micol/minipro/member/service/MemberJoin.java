@@ -1,39 +1,37 @@
 package co.micol.minipro.member.service;
 
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+
 
 import co.micol.minipro.common.Service;
 import co.micol.minipro.member.dao.MemberDao;
 
-public class Login implements Service {
+public class MemberJoin implements Service {
 
 	@Override
 	public String run(HttpServletRequest request, HttpServletResponse response) {
-		// 로그인과정을 처리한다.
+		// TODO 회원가입시 DB에 저장하는 메소드
 		MemberDao dao = new MemberDao();
 		MemberVo vo = new MemberVo();
 		vo.setmId(request.getParameter("mId"));
 		vo.setmPassword(request.getParameter("mPassword"));
-		
-		vo = dao.select(vo);
+		vo.setmName(request.getParameter("mName"));
 		
 		String viewPage = null;
+		int n = dao.insert(vo);
+		request.setAttribute("vo", vo);
 		
-		if(vo.getmAuth()!= null) {
-			HttpSession session = request.getSession(); 
-			session.setAttribute("mid", vo.getmId());	
-			session.setAttribute("mauth", vo.getmAuth());	
-			request.setAttribute("vo", vo);
-			viewPage="views/member/JoinSuccess.jsp";			
-		}else {
+		if (n != 0) {
 			viewPage = "views/member/JoinFail.jsp";
+		}else {
+			viewPage = "views/member/JoinSuccess.jsp";
 		}
-				
+					
 		
 		return viewPage;
+		
+
 	}
 
 }

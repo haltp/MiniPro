@@ -27,8 +27,8 @@ public class MemberDao extends DAO implements Dbinterface<MemberVo> {
 			psmt = conn.prepareStatement(sql);
 			psmt.setString(1, vo.getmId());
 			psmt.setString(2, vo.getmPassword());
-			rs=psmt.executeQuery();
-			if(rs.next()) {
+			rs = psmt.executeQuery();
+			if (rs.next()) {
 				vo.setmName(rs.getString("mname"));
 				vo.setmAuth(rs.getString("mauth"));
 			}
@@ -42,8 +42,21 @@ public class MemberDao extends DAO implements Dbinterface<MemberVo> {
 
 	@Override
 	public int insert(MemberVo vo) {
-		// TODO Auto-generated method stub
-		return 0;
+		String sql = "INSERT INTO MEMBER(MID, MNAME, MPASSWORD) VALUES(?, ?,?)";
+		int n = 0;
+		try {
+			psmt = conn.prepareStatement(sql);
+			psmt.setString(1, vo.getmId());
+			psmt.setString(2, vo.getmName());
+			psmt.setString(3, vo.getmPassword());
+			rs = psmt.executeQuery();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close();
+		}
+		return n;
 	}
 
 	@Override
@@ -56,6 +69,24 @@ public class MemberDao extends DAO implements Dbinterface<MemberVo> {
 	public int delete(MemberVo vo) {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+	
+	public boolean isIdCheck(String id) {	//id중복체크를 위한 메소드
+		boolean bool = true;
+		String sql = "SELECT MID FROM MEMBER WHERE MID = ?";
+		try {
+			psmt = conn.prepareStatement(sql);
+			psmt.setString(1, id);
+			rs = psmt.executeQuery();
+			if(rs.next()) {
+				bool = false;
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally {
+			close();
+		}
+		return bool;
 	}
 
 	private void close() {
